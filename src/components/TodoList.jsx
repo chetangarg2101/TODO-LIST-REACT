@@ -5,11 +5,23 @@ function Todolist({ index, item, toggleComplete, deleteItem, editTodo }) {
   const [isEditing, setIsEditing] = useState(false);
   const [newText, setNewText] = useState(item.text);
 
-  const handleEdit = () => {
+  const handleEditToggle = () => {
     if (isEditing) {
       editTodo(index, newText);
+    } else {
+      setNewText(item.text); // Set newText to the current item's text when entering edit mode
     }
     setIsEditing(!isEditing);
+  };
+
+  const handleInputChange = (e) => {
+    setNewText(e.target.value);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleEditToggle();
+    }
   };
 
   return (
@@ -23,20 +35,20 @@ function Todolist({ index, item, toggleComplete, deleteItem, editTodo }) {
         <input
           type="text"
           value={newText}
-          onChange={(e) => setNewText(e.target.value)}
-          onBlur={handleEdit}
-          onKeyPress={(e) => e.key === 'Enter' && handleEdit()}
+          onChange={handleInputChange}
+          onBlur={handleEditToggle}
+          onKeyPress={handleKeyPress}
           autoFocus
         />
       ) : (
-        <span
-          style={{ textDecoration: item.completed ? 'line-through' : 'none', marginLeft: '10px' }}
-          onDoubleClick={handleEdit}
-        >
+        <span style={{ marginLeft: '10px' }}>
           {item.text} - {item.timestamp}
         </span>
       )}
-      <button onClick={() => deleteItem(index)}>Delete</button>
+      <div className="button-container">
+        <button onClick={handleEditToggle}>{isEditing ? 'Save' : 'Edit'}</button>
+        <button onClick={() => deleteItem(index)}>Delete</button>
+      </div>
     </div>
   );
 }
